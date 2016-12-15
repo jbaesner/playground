@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Copyright 2016 Red Hat, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jboss.playground</groupId>
+		<artifactId>playground-native</artifactId>
+		<version>0.0.1</version>
+	</parent>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<artifactId>playground-native-linux</artifactId>
+
+	<properties>
+		<module.native.lib.dir>${basedir}/../../module/target/jboss-modules/org/jboss/playground/playground-module/main/lib/linux-x86_64</module.native.lib.dir>
+		<lib.name>libjnitest.so</lib.name>
+	</properties>
+
+	<packaging>so</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.playground</groupId>
+			<artifactId>playground-module</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<version>1.0-alpha-8</version>
+				<extensions>true</extensions>
+				<configuration>
+
+					<!-- trigger javah execution -->
+					<javahClassNames>
+						<javahClassName>org.jboss.playground.JniTestInModule</javahClassName>
+					</javahClassNames>
+					<javahSearchJNIFromDependencies>false</javahSearchJNIFromDependencies>
+					<javahOS>linux</javahOS>
+
+					<sources>
+						<source>
+							<!-- relative to your project directory -->
+							<directory>../src/main/native</directory>
+							<fileNames>
+								<fileName>jnitest.c</fileName>
+							</fileNames>
+						</source>
+					</sources>
+
+					<compilerStartOptions>
+						<compilerStartOption>-fPIC</compilerStartOption>
+					</compilerStartOptions>
+
+					<linkerStartOptions>
+						<linkerStartOption>-shared</linkerStartOption>
+					</linkerStartOptions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- copy and rename the created shared library to the modules lib directory -->
+				<groupId>com.coderplus.maven.plugins</groupId>
+				<artifactId>copy-rename-maven-plugin</artifactId>
+				<version>1.0.1</version>
+				<executions>
+					<execution>
+						<id>copy-file</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<sourceFile>${project.build.directory}/${project.artifactId}.so</sourceFile>
+							<destinationFile>${module.native.lib.dir}/${lib.name}</destinationFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

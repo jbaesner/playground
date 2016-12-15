@@ -1,0 +1,41 @@
+<!-- https://www.smartics.eu/confluence/display/SJBMMP/The+smartics+JBoss+Modules+XSD -->
+<modules xmlns="http://smartics.de/ns/jboss-modules-descriptor/1">
+
+
+	<module name="$g1">
+		<match>	
+			<includes>
+				<include>
+					<groupId>(org.jboss.quickstarts.eap)</groupId>
+				</include>
+			</includes>
+		</match>
+<!--
+		This is an example how to generate property defintions into the resulting module.xml
+
+		<apply-to-module>
+			<properties>
+				<property name="my.1st.property" value="my.1st.value" />
+				<property name="my.2nd.property" value="my.2nd.value" />
+			</properties>
+			<dependencies>
+				<module name="org.slf4j" slot="1.7.14" optional="false" />
+			</dependencies>
+		</apply-to-module>
+-->
+	</module>
+	<module name="org.slf4j" slot="main">
+		<match>
+			<includes>
+				<include>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</include>
+			</includes>
+		</match>
+		<directives>
+			<skip>true</skip>
+		</directives>
+	</module>
+
+</modules>

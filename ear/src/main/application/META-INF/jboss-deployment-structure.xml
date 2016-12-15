@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<jboss-deployment-structure>
+	<sub-deployment name="playground-ejb.jar">
+		<dependencies>
+			<module name="org.jboss.playground.playground-module" />
+		</dependencies>
+	</sub-deployment>
+</jboss-deployment-structure>
