@@ -113,13 +113,6 @@
 					<linkerStartOptions>
 						<linkerStartOption>-shared</linkerStartOption>
 					</linkerStartOptions>
-<!--
-					<linkerFinalName></linkerFinalName>
-
-					<linkerEndOptions>
-						<linkerEndOption>-o ${project.build.directory}/${lib.name}</linkerEndOption>
-					</linkerEndOptions>
--->
 				</configuration>
 			</plugin>
 			<plugin>
