@@ -115,7 +115,7 @@
 		<module>ear</module>
 		<module>module</module>
 		<module>native</module>
-        <!--module>jmeter</module-->
+		<module>jmeter</module>
 	</modules>
 
 	<dependencyManagement>

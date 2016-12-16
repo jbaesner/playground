@@ -1,0 +1,4 @@
+connect
+jms-queue add --queue-address=PlaygroundQueue --entries=/queue/PlaygroundQueue,java:/jms/queue/PlaygroundQueue
+/subsystem=messaging-activemq/server=default/pooled-connection-factory=activemq-ra:write-attribute(name=min-pool-size, value=50)
+/subsystem=messaging-activemq/server=default/pooled-connection-factory=activemq-ra:write-attribute(name=max-pool-size, value=50)

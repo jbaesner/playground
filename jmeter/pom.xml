@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Copyright 2016 Red Hat, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<description>
+		Useful JMeter Maven information:
+		- https://blog.codecentric.de/2013/12/jmeter-tests-mit-maven-und-jenkins-automatisieren/ [de]
+		- https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki
+		- https://github.com/Cka3o4Huk/jmeter-graph-maven-plugin
+		- https://jmeter-plugins.org/wiki/JMeterPluginsCMD/
+	</description>
+
+	<parent>
+		<groupId>org.jboss.playground</groupId>
+		<artifactId>playground</artifactId>
+		<version>0.0.1</version>
+	</parent>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<artifactId>playground-jmeter</artifactId>
+
+	<profiles>
+		<profile>
+			<id>bean</id>
+			<properties>
+				<sampler.class>org.jboss.playground.BeanDispatcherTestSampler</sampler.class>
+				<client.threads>50</client.threads>
+				<test.duration.seconds>60</test.duration.seconds>
+			</properties>
+		</profile>
+		<profile>
+			<id>container</id>
+			<properties>
+				<sampler.class>org.jboss.playground.ContainerDispatcherTestSampler</sampler.class>
+				<client.threads>50</client.threads>
+				<test.duration.seconds>60</test.duration.seconds>
+			</properties>
+		</profile>
+	</profiles>
+
+	<properties>
+		<sampler.class>org.jboss.playground.BeanDispatcherTestSampler</sampler.class>
+		<client.threads>50</client.threads>
+		<test.duration.seconds>30</test.duration.seconds>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.lazerycode.jmeter</groupId>
+				<artifactId>jmeter-maven-plugin</artifactId>
+				<version>2.0.3</version>
+				<configuration>
+					<testResultsTimestamp>false</testResultsTimestamp>
+					<overrideRootLogLevel>DEBUG</overrideRootLogLevel>
+					<suppressJMeterOutput>false</suppressJMeterOutput>
+					<ignoreResultFailures>true</ignoreResultFailures>
+					<propertiesUser>
+						<samplerClass>${sampler.class}</samplerClass>
+						<threadCount>${client.threads}</threadCount>
+						<duration>${test.duration.seconds}</duration>
+					</propertiesUser>
+					<propertiesJMeter>
+						<jmeter.save.saveservice.thread_counts>true</jmeter.save.saveservice.thread_counts>
+					</propertiesJMeter>
+					<propertiesSystem>
+						<!--java.util.logging.config.file>${project.build.directory}/jmeter/classes/logging.properties</java.util.logging.config.file-->
+					</propertiesSystem>
+					<jmeterExtensions>
+						<artifact>${project.groupId}:playground-ejb:jar:${project.version}</artifact>
+						<artifact>${project.groupId}:playground-jmeter:jar:${project.version}</artifact>
+						<artifact>org.jboss.eap:wildfly-client-all:jar:7.0.3.GA-redhat-2</artifact>
+					</jmeterExtensions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>jmeter-tests</id>
+						<goals>
+							<goal>jmeter</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>de.codecentric</groupId>
+				<artifactId>jmeter-graph-maven-plugin</artifactId>
+				<version>0.1.0</version>
+				<executions>
+					<execution>
+						<id>create-graphs</id>
+						<goals>
+							<goal>create-graph</goal>
+						</goals>
+						<phase>verify</phase>
+						<configuration>
+							<inputFile>${project.build.directory}/jmeter/results/jmeter-test.jtl</inputFile>
+							<graphs>
+								<graph>
+									<pluginType>HitsPerSecond</pluginType>
+									<width>1920</width>
+									<height>1080</height>
+									<outputFile>${project.build.directory}/jmeter/results/jmeter-test-hps.png</outputFile>
+								</graph>
+							</graphs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- JBoss distributes a complete set of Java EE APIs including a Bill 
+				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
+				of artifacts. We use this here so that we always get the correct versions 
+				of artifacts. Here we use the jboss-eap-javaee7 stack (you can read this 
+				as the JBoss stack of the Java EE APIs and related components. -->
+			<dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>jboss-eap-javaee7</artifactId>
+				<version>${version.jboss.bom.eap}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.jmeter</groupId>
+			<artifactId>ApacheJMeter_core</artifactId>
+			<version>3.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jmeter</groupId>
+			<artifactId>ApacheJMeter_java</artifactId>
+			<version>3.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Include the ejb client jars -->
+		<dependency>
+			<groupId>org.jboss.eap</groupId>
+			<artifactId>wildfly-ejb-client-bom</artifactId>
+			<type>pom</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.playground</groupId>
+			<artifactId>playground-ejb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

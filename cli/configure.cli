@@ -1,4 +1,0 @@
-connect
-jms-queue add --queue-address=OrderQueue --entries=/queue/OrdersQueue,java:/jms/queue/OrdersQueue
-/subsystem=messaging-activemq/server=default/pooled-connection-factory=activemq-ra:write-attribute(name=min-pool-size, value=100)
-/subsystem=messaging-activemq/server=default/pooled-connection-factory=activemq-ra:write-attribute(name=max-pool-size, value=100)
