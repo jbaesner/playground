@@ -115,6 +115,7 @@
 		<module>ear</module>
 		<module>module</module>
 		<module>native</module>
+		<module>client</module>
 		<module>jmeter</module>
 	</modules>
 
